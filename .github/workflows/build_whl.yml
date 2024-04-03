@@ -1,0 +1,35 @@
+name: Build aarch64 WHL
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8.6'
+
+    - name: Install dependencies
+      run: |
+        sudo yum install -y python3-devel
+        python -m pip install --upgrade pip
+        pip install wheel
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build WHL
+      run: |
+        python setup.py bdist_wheel
+
+    - name: Upload WHL artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: grpcio
+        path: dist/*.whl
